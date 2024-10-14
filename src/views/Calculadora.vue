@@ -18,39 +18,20 @@
     </div>
   </template>
 
-  <script>
+  <script setup>
   import { ref, computed } from 'vue'
 
-  export default {
-    setup() {
-      const notas = ref([0, 0, 0, 0, 0, 0])
+  const notas = ref([0, 0, 0, 0, 0, 0])
+  const ponderacion = ref([0.20, 0.20, 0.20, 0.20, 0.10, 0.10])
 
-      const ponderacion = ref([0.20, 0.20, 0.20, 0.20, 0.10, 0.10])
+  const promedio = computed(() => {
+    return notas.value.reduce((total, nota, index) => {
+      return total + nota * ponderacion.value[index]
+    }, 0)
+  })
 
-      const promedio = computed(() => {
-        let total = 0
-        notas.value.forEach((nota, index) => {
-          total += nota * ponderacion.value[index]
-        })
-        return total
-      })
-
-      const validarNota = (index) => {
-        if (notas.value[index] > 70) {
-          notas.value[index] = 70
-        }
-        if (notas.value[index] < 0) {
-          notas.value[index] = 0
-        }
-      }
-
-      return {
-        notas,
-        ponderacion,
-        promedio,
-        validarNota
-      }
-    }
+  const validarNota = (index) => {
+    notas.value[index] = Math.max(0, Math.min(notas.value[index], 70))
   }
   </script>
 
@@ -84,16 +65,17 @@
     padding: 5px;
     width: 50px;
     text-align: center;
-
-    -moz-appearance: textfield;
-    -webkit-appearance: none;
     appearance: none;
+  }
 
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 
   h2 {
